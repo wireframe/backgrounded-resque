@@ -18,27 +18,20 @@ end
 
 class ResqueHandlerTest < Test::Unit::TestCase
   class User < ActiveRecord::Base
-    backgrounded :do_stuff
-
     def do_stuff
     end
   end
 
   class Post < ActiveRecord::Base
-    backgrounded :do_stuff => {:queue => 'important'}
-
     def do_stuff
     end
   end
 
   class Blog < ActiveRecord::Base
     class << self
-      backgrounded :do_stuff
-
       def do_stuff
       end
     end
-    backgrounded :do_stuff
     def do_stuff
     end
   end
@@ -53,7 +46,7 @@ class ResqueHandlerTest < Test::Unit::TestCase
     context 'a class level backgrounded method' do
       context "invoking backgrounded method" do
         setup do
-          Blog.do_stuff_backgrounded
+          Blog.backgrounded.do_stuff
         end
         should "enqueue job to resque" do
           assert_queued Backgrounded::Handler::ResqueHandler, [Blog.to_s, -1, 'do_stuff']
@@ -70,7 +63,7 @@ class ResqueHandlerTest < Test::Unit::TestCase
       context 'with an instance level backgrounded method of the same name' do
         setup do
           @blog = Blog.create
-          @blog.do_stuff_backgrounded
+          @blog.backgrounded.do_stuff
         end
         should "enqueue instance method job to resque" do
           assert_queued Backgrounded::Handler::ResqueHandler, [Blog.to_s, @blog.id, 'do_stuff']
@@ -93,7 +86,7 @@ class ResqueHandlerTest < Test::Unit::TestCase
       end
       context "invoking backgrounded method" do
         setup do
-          @user.do_stuff_backgrounded
+          @user.backgrounded.do_stuff
         end
         should "enqueue job to resque" do
           assert_queued Backgrounded::Handler::ResqueHandler, [User.to_s, @user.id, 'do_stuff']
@@ -113,7 +106,7 @@ class ResqueHandlerTest < Test::Unit::TestCase
         end
         context "invoking backgrounded method" do
           setup do
-            @post.do_stuff_backgrounded
+            @post.backgrounded(:queue => 'important').do_stuff
           end
           should "use configured queue" do
             assert_equal 'important', Backgrounded::Handler::ResqueHandler.queue
