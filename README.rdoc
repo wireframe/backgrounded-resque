@@ -8,9 +8,8 @@ This library is an extension which add support for the Resque job processing fra
 see http://github.com/defunkt/resque/
 
 = Features
-* support for clean and concise API which removes any dependency on external "worker" jobs and allows you to execute any model method in the background
-* integrates with any background processing framework (DelayedJob, Resque, JobFu, Workling, etc)
-* background methods can be actually unit tested by using an 'in process' runner
+* execute class or instance level methods within resque background workers
+* supports enqueing jobs into custom queues
 
 = Installation
 
