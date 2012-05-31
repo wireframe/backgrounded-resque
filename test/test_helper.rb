@@ -14,7 +14,7 @@ require 'active_record'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
-require 'backgrounded'
+require 'backgrounded-resque'
 
 Backgrounded.logger.level = Logger::DEBUG
 

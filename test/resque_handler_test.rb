@@ -1,5 +1,4 @@
-require File.join(File.dirname(__FILE__), '..', '..', 'test_helper')
-require 'backgrounded/handler/resque_handler'
+require File.join(File.dirname(__FILE__), 'test_helper')
 require 'resque_unit'
 
 ActiveRecord::Schema.define(:version => 1) do
@@ -39,7 +38,7 @@ class ResqueHandlerTest < Test::Unit::TestCase
   context 'when backgrounded is configured with resque' do
     setup do
       Resque.reset!
-      @handler = Backgrounded::Handler::ResqueHandler.new
+      @handler = Backgrounded::Resque::ResqueHandler.new
       Backgrounded.handler = @handler
     end
 
@@ -49,8 +48,8 @@ class ResqueHandlerTest < Test::Unit::TestCase
           Blog.backgrounded.do_stuff
         end
         should "enqueue job to resque" do
-          assert_queued Backgrounded::Handler::ResqueHandler, [Blog.to_s, -1, 'do_stuff']
-          assert_equal Backgrounded::Handler::ResqueHandler::DEFAULT_QUEUE, Resque.queue_from_class(Backgrounded::Handler::ResqueHandler)
+          assert_queued Backgrounded::Resque::ResqueHandler, [Blog.to_s, -1, 'do_stuff']
+          assert_equal Backgrounded::Resque::ResqueHandler::DEFAULT_QUEUE, Resque.queue_from_class(Backgrounded::Resque::ResqueHandler)
         end
         context "running background job" do
           setup do
@@ -66,8 +65,8 @@ class ResqueHandlerTest < Test::Unit::TestCase
           @blog.backgrounded.do_stuff
         end
         should "enqueue instance method job to resque" do
-          assert_queued Backgrounded::Handler::ResqueHandler, [Blog.to_s, @blog.id, 'do_stuff']
-          assert_equal Backgrounded::Handler::ResqueHandler::DEFAULT_QUEUE, Resque.queue_from_class(Backgrounded::Handler::ResqueHandler)
+          assert_queued Backgrounded::Resque::ResqueHandler, [Blog.to_s, @blog.id, 'do_stuff']
+          assert_equal Backgrounded::Resque::ResqueHandler::DEFAULT_QUEUE, Resque.queue_from_class(Backgrounded::Resque::ResqueHandler)
         end
         context "running background job" do
           setup do
@@ -89,8 +88,8 @@ class ResqueHandlerTest < Test::Unit::TestCase
           @user.backgrounded.do_stuff
         end
         should "enqueue job to resque" do
-          assert_queued Backgrounded::Handler::ResqueHandler, [User.to_s, @user.id, 'do_stuff']
-          assert_equal Backgrounded::Handler::ResqueHandler::DEFAULT_QUEUE, Resque.queue_from_class(Backgrounded::Handler::ResqueHandler)
+          assert_queued Backgrounded::Resque::ResqueHandler, [User.to_s, @user.id, 'do_stuff']
+          assert_equal Backgrounded::Resque::ResqueHandler::DEFAULT_QUEUE, Resque.queue_from_class(Backgrounded::Resque::ResqueHandler)
         end
         context "running background job" do
           should "invoke method on user object" do
@@ -109,8 +108,8 @@ class ResqueHandlerTest < Test::Unit::TestCase
             @post.backgrounded(:queue => 'important').do_stuff
           end
           should "use configured queue" do
-            assert_equal 'important', Backgrounded::Handler::ResqueHandler.queue
-            assert_equal 'important', Resque.queue_from_class(Backgrounded::Handler::ResqueHandler)
+            assert_equal 'important', Backgrounded::Resque::ResqueHandler.queue
+            assert_equal 'important', Resque.queue_from_class(Backgrounded::Resque::ResqueHandler)
             assert_equal 1, Resque.queue('important').length
           end
         end
