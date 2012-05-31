@@ -35,6 +35,15 @@ class ResqueHandlerTest < Test::Unit::TestCase
     end
   end
 
+  context '.queue' do
+    should "default to #{Backgrounded::Resque::ResqueHandler::DEFAULT_QUEUE}" do
+      assert_equal Backgrounded::Resque::ResqueHandler::DEFAULT_QUEUE, Backgrounded::Resque::ResqueHandler.queue
+    end
+    should 'be used by resque to determine job queue' do
+      assert_equal Backgrounded::Resque::ResqueHandler::DEFAULT_QUEUE, Resque.queue_from_class(Backgrounded::Resque::ResqueHandler)
+    end
+  end
+
   context 'when backgrounded is configured with resque' do
     setup do
       Resque.reset!

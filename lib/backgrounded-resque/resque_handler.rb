@@ -7,15 +7,19 @@ module Backgrounded
     class ResqueHandler < Backgrounded::Handler::AbstractHandler
       DEFAULT_QUEUE = 'backgrounded'
       INVALID_ID = -1
-      @@queue = DEFAULT_QUEUE
 
+      # resque uses this attribute to determine what queue the job belongs in
+      # @see Resque.queue_from_class
+      class_attribute :queue
+      self.queue = DEFAULT_QUEUE
+
+      # enqueue the requested operation into resque
+      # the resque worker will invoke .perform with the class/method/args
+      # @see .perform
       def request(object, method, args)
-        @@queue = options[:queue] || DEFAULT_QUEUE
+        ResqueHandler.queue = options[:queue] || DEFAULT_QUEUE
         instance, id = instance_identifiers(object)
         ::Resque.enqueue(ResqueHandler, instance, id, method, *args)
-      end
-      def self.queue
-        @@queue
       end
 
       # invoke the requested method
