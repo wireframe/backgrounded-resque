@@ -88,6 +88,20 @@ class ResqueHandlerTest < Test::Unit::TestCase
       end
     end
 
+    module Foo
+      def self.bar
+      end
+    end
+
+    context 'a module with backgrounded method' do
+      setup do
+        Foo.expects(:bar)
+        Foo.backgrounded.bar
+        Resque.run!
+      end
+      should 'invoke module class method in background' do end # see expectations
+    end
+
     context 'a persisted object with a single backgrounded method' do
       setup do
         @user = User.create

@@ -1,5 +1,6 @@
 require 'resque'
 require 'backgrounded/handler/abstract_handler'
+require 'active_record/base'
 
 # enqueue requests in resque
 module Backgrounded
@@ -34,10 +35,10 @@ module Backgrounded
         id.to_i == INVALID_ID ? clazz : clazz.find(id)
       end
       def instance_identifiers(object)
-        instance, id = if object.is_a?(Class) 
-          [object.name, INVALID_ID]
-        else
+        instance, id = if object.kind_of?(ActiveRecord::Base)
           [object.class.name, object.id]
+        else
+          [object.name, INVALID_ID]
         end
       end
     end
