@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "backgrounded"
 
-  s.add_runtime_dependency(%q<backgrounded>, [">= 2.0.0.rc2"])
+  s.add_runtime_dependency(%q<backgrounded>, [">= 2.1.0"])
   s.add_runtime_dependency(%q<resque>, [">= 0.17.1"])
   s.add_development_dependency(%q<shoulda>, [">= 0"])
   s.add_development_dependency(%q<resque_unit>, [">= 0.3.7"])

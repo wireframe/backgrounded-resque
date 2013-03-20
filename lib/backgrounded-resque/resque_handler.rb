@@ -1,11 +1,10 @@
 require 'resque'
-require 'backgrounded/handler/abstract_handler'
 require 'active_record/base'
 
 # enqueue requests in resque
 module Backgrounded
   module Resque
-    class ResqueHandler < Backgrounded::Handler::AbstractHandler
+    class ResqueHandler
       DEFAULT_QUEUE = 'backgrounded'
       INVALID_ID = -1
 
@@ -17,7 +16,7 @@ module Backgrounded
       # enqueue the requested operation into resque
       # the resque worker will invoke .perform with the class/method/args
       # @see .perform
-      def request(object, method, args)
+      def request(object, method, args, options={})
         ResqueHandler.queue = options[:queue] || DEFAULT_QUEUE
         instance, id = instance_identifiers(object)
         ::Resque.enqueue(ResqueHandler, instance, id, method, *args)
